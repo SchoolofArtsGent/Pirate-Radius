@@ -7,12 +7,12 @@ An anonymous and completely open offline local wireless network for filesharing 
 * An SD card for the Pi.
 * A powersupply for the Pi.
 * An ethernet cable and working internet connection. (Only needed during installation.)
-* A USB wifi dongle with support for access point mode. See http://elinux.org/RPi_USB_Wi-Fi_Adapters. We used this one: http://www.dhgate.com/product/150m-usb-wifi-wireless-network-card-lan-adapter/138478687.html.
+* A USB wifi dongle with support for access point mode. See http://elinux.org/RPi_USB_Wi-Fi_Adapters. We used this one: http://www.dhgate.com/product/150m-usb-wifi-wireless-network-card-lan-adapter/138478687.html. We also tested the TP LINK TL-WN821N v4 (ID 0bda:8178, chipset RTL8192CU) and it works with a small modification. See  http://www.tp-link.com/en/products/details/cat-11_TL-WN821N.html.
 * A 20cm piece of electric wire, for the antenna.
 * An FM radio for listening.
 * A nice enclosure. We built a birdhouse.
 
-Not strictly needed, but makes installing easier: a screen with HDMI cable, and a USB keyboard and mouse. 
+Not strictly needed, but makes installing easier: a screen with HDMI cable, and a USB keyboard and mouse.
 
 ## Preparing the Pi
 
@@ -33,21 +33,21 @@ First we turn the Raspberry Pi into a wireless access point:
 	sudo apt-get -y install lighttpd
 	sudo /etc/init.d/lighttpd stop
 	sudo update-rc.d lighttpd remove
-	sudo apt-get -y install dnsmasq 
+	sudo apt-get -y install dnsmasq
 	sudo /etc/init.d/dnsmasq  stop
-	sudo update-rc.d dnsmasq remove 
+	sudo update-rc.d dnsmasq remove
 	sudo apt-get -y  install hostapd
 	sudo /etc/init.d/hostapd  stop
-	sudo update-rc.d hostapd remove 
+	sudo update-rc.d hostapd remove
 	sudo apt-get -y install iw
 	sudo rm /bin/sh
 	sudo ln /bin/bash /bin/sh
-	sudo chmod a+rw /bin/sh 
+	sudo chmod a+rw /bin/sh
 
 Replace the contents of /etc/network/interfaces on the Pi with:
 
 	auto lo
-	 
+
 	iface lo inet loopback
 	iface eth0 inet dhcp
 
@@ -67,10 +67,41 @@ Install the Piratebox sofware on the Pi:
 	cd /opt/piratebox
 	sudo sed 's:DROOPY_USE_USER="no":DROOPY_USE_USER="yes":' -i  /opt/piratebox/conf/piratebox.conf
 	sudo ln -s /opt/piratebox/init.d/piratebox /etc/init.d/piratebox
-	sudo update-rc.d piratebox  defaults 
+	sudo update-rc.d piratebox  defaults
 	sudo /etc/init.d/piratebox start
 
 If everything went ok you should see a wifi network now: 'PirateBox - Share Freely'. If you connect to it, any webpage should redirect you to the PirateBox interface. From there you can chat and upload files.
+
+## Alternative: Installing Raspberry Pi(rate)Box from GitHub
+git clone https://github.com/SchoolofArtsGent/PirateBoxScripts_Webserver
+cd /home/pi/PirateBoxScripts_Webserver/piratebox
+sudo ./install.sh
+sudo update-rc.d piratebox  defaults
+
+# Using the TP LINK TL-WN821N v4 wifi stick
+
+See also: https://www.raspberrypi.org/forums/viewtopic.php?f=36&t=82403.
+
+Check if this the model you have
+
+	lsusb
+
+Stick should show up as:
+
+	ID 0bda:8178 Realtek Semiconductor Corp. RTL8192CU 802.11n WLAN Adapter
+
+Needs custom version of hostapd
+
+	sudo mv /usr/sbin/hostapd /usr/sbin/hostapd_orig
+	wget http://dl.dropbox.com/u/1663660/hostapd/hostapd.zip
+	unzip hostapd.zip
+	sudo mv hostapd /usr/sbin/
+	sudo chmod +x /usr/sbin/hostapd
+
+Optional: test with
+
+	sudo hostapd -d /opt/piratebox/conf/hostapd.conf
+
 
 ## Installing PiFM
 
@@ -137,8 +168,8 @@ Copy/pase this script into radio.sh, and then save the file with Control-X, Y, a
 	        # Generate a playlist from the results
 
 	        playlist="$( mktemp "$TEMP_FILES_PATTERN" )"
-	        if [ $SHUFFLE = "true" ]; then 
-	            # prefix each line with random number, sort numerically and cut of leading number ;-)        
+	        if [ $SHUFFLE = "true" ]; then
+	            # prefix each line with random number, sort numerically and cut of leading number ;-)
 	            cat "$songListFile" \
 	            | while read song; do echo "${RANDOM} $song"; done \
 	            | sort -n \
@@ -170,7 +201,7 @@ Copy/pase this script into radio.sh, and then save the file with Control-X, Y, a
 	            #     avconv -v fatal -i pipe:0 -ac 1 -ar 22050 -b 352k -f wav -
 	            #
 	            # read compatible audio data from stdin and play with pifm at specified frequency:
-	            #     '$PIFM_BINARY' - $PIFM_FREQUENCY 
+	            #     '$PIFM_BINARY' - $PIFM_FREQUENCY
 	            command="sox '$song' -t mp3 - channels 1 | avconv -v fatal -i pipe:0 -ac 1 -ar 22050 -b 352k -f wav - | '$PIFM_BINARY' - $PIFM_FREQUENCY"
 
 
@@ -213,10 +244,51 @@ Add this line:
 * sudo nano /opt/piratebox/conf/hostapd.conf
 * sudo reboot
 
-### Changing the Piratebox interface 
-
-TODO
-
 ### Deleting files
 
 * sudo rm /opt/piratebox/share/Shared/example.mp3
+
+# Optional: updating website design
+
+## Preparation on Pi
+Make sure the git repository is on the Pi. You should have this folder:
+
+	/home/pi/PirateBoxScripts_Webserver
+
+If not, run
+
+	cd ~
+	git clone https://github.com/SchoolofArtsGent/PirateBoxScripts_Webserver
+
+Make the update script executable. Only needed once:
+
+	chmod +x /home/pi/PirateBoxScripts_Webserver/update_website.sh # this onl
+
+## Making changes to the design on your computer
+Clone the repo on your computer:
+
+	git clone https://github.com/SchoolofArtsGent/PirateBoxScripts_Webserver
+
+Files for design can be found in:
+
+	piratebox/piratebox/www
+
+We use Foundation 5. Changes to CSS should made in
+
+	piratebox/piratebox/www/css/radius.css
+
+Changes to the HTML of the home page should be made in
+
+	piratebox/piratebox/www/css/index.html
+
+Make sure not remove the chat (div id shoutbox) and file upload (div id upload). You also want to keep the scripts.js in there.
+
+To get an idea of how the design will look like: open index.html in your browser. Chat and file upload won't work while your testing on your computer.
+
+## Updating Pi with changes
+Make sure the Pi has an internet connection.
+
+Each time you want to update the design on the Pi, do this:
+
+	cd /home/pi/PirateBoxScripts_Webserver
+	./update_website.sh
