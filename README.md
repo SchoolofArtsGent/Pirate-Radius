@@ -294,7 +294,7 @@ Changes to the HTML of the home page should be made in
 
 Changes to the HTML of the file listing should be made in
 
-	/opt/piratebox/www/cgi-bin/shared_files.py
+	piratebox/piratebox/www/cgi-bin/shared_files.py
 
 To link to file listing: use /cgi-bin/shared_files.py, not /Shared as on default PirateBox installation.
 
