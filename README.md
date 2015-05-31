@@ -248,6 +248,17 @@ Add this line:
 
 * sudo rm /opt/piratebox/share/Shared/example.mp3
 
+### Making the shutdown button work
+
+On Pi:
+
+	sudo visudo
+
+Add:
+
+	nobody ALL=NOPASSWD:/sbin/halt
+
+
 # Optional: updating website design
 
 ## Preparation on Pi
@@ -280,6 +291,12 @@ We use Foundation 5. Changes to CSS should made in
 Changes to the HTML of the home page should be made in
 
 	piratebox/piratebox/www/css/index.html
+
+Changes to the HTML of the file listing should be made in
+
+	/opt/piratebox/www/cgi-bin/shared_files.py
+
+To link to file listing: use /cgi-bin/shared_files.py, not /Shared as on default PirateBox installation.
 
 Make sure not remove the chat (div id shoutbox) and file upload (div id upload). You also want to keep the scripts.js in there.
 
