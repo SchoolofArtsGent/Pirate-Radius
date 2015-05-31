@@ -273,7 +273,7 @@ If not, run
 
 Make the update script executable. Only needed once:
 
-	chmod +x /home/pi/PirateBoxScripts_Webserver/update_website.sh # this onl
+	chmod +x /home/pi/PirateBoxScripts_Webserver/update_website.sh
 
 ## Making changes to the design on your computer
 Clone the repo on your computer:
