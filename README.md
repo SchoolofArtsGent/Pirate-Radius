@@ -126,7 +126,7 @@ Copy/pase this script into radio.sh, and then save the file with Control-X, Y, a
 	#!/bin/bash
 
 	MUSIC_ROOT="/opt/piratebox/share/Shared"
-	PIFM_BINARY="/home/pi/pifm/pifm"
+	PIFM_BINARY="/home/pi/pifm"
 	PIFM_FREQUENCY=92
 	LOG_ROOT="/home/pi/pifm/logs"
 	SHUFFLE="true" # true | false
